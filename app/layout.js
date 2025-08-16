@@ -1,6 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { StackProvider, StackTheme } from "@stackframe/stack";
-// import {Provider} from "."
+import Provider from "./provider"
 import { stackServerApp } from "../stack";
 import "./globals.css";
 
