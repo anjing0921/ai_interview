@@ -12,11 +12,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { CoachingExpert } from '@/services/Options'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
+import { useMutation } from 'convex/react'
 
 
 function UserInputDialog({children, coachingOption}) {
     const [selectedExpert, setSelectedExpert] = useState();
     const [topic, setTopic] = useState();
+    const createDiscussionRoom = useMutation(api.DiscussionRoom.CreateNewRoom);
 
     return (
         <Dialog>
