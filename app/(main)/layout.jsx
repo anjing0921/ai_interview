@@ -1,5 +1,5 @@
 import React from 'react'
-import AppHeader from './_component/AppHeader'
+import AppHeader from './_components/AppHeader'
 
 
 function DashboardLayou({ children }) {
