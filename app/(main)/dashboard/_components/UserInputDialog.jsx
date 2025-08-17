@@ -9,19 +9,36 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
+import { api } from '@/convex/_generated/api'
 import { CoachingExpert } from '@/services/Options'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { useMutation } from 'convex/react'
+import { LoaderCircle } from 'lucide-react'
 
 
 function UserInputDialog({children, coachingOption}) {
     const [selectedExpert, setSelectedExpert] = useState();
     const [topic, setTopic] = useState();
     const createDiscussionRoom = useMutation(api.DiscussionRoom.CreateNewRoom);
+    const [loading, setLoading] = useState(false);
+    const [openDialog, setOpenDialog] = useState(false);
+
+
+    const OnClickNext = async () => {
+        setLoading(true);
+        const result = await createDiscussionRoom({
+            topic: topic,
+            coachingOption: coachingOption?.name,
+            expertName: selectedExpert,
+        })
+        console.log(result);
+        setLoading(false); 
+        setOpenDialog(false);
+    }
 
     return (
-        <Dialog>
+        <Dialog open={openDialog} onOpenChange={setOpenDialog} >
             <DialogTrigger>{children}</DialogTrigger>
             <DialogContent>
                 <DialogHeader>
@@ -54,7 +71,9 @@ function UserInputDialog({children, coachingOption}) {
                                 </DialogClose>
                                 
 
-                                <Button disabled={(!topic || !selectedExpert)}>Next</Button>
+                                <Button disabled={(!topic || !selectedExpert || loading)} onClick={OnClickNext}>
+                                    {loading && <LoaderCircle className='animate-spin' />}
+                                    Next</Button>
                             </div>
                         </div>
 
