@@ -4,6 +4,7 @@ import { useUser } from '@stackframe/stack'
 import { Button } from '@/components/ui/button';
 import { ExpertsList } from '@/services/Options';
 import Image from 'next/image';
+import UserInputDialog from './UserInputDialog';
 
 
 
@@ -22,13 +23,16 @@ function FeatureAssistants() {
 
             <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-10 mt-10'>
                 {ExpertsList.map((option, index) => (
-                    <div key={index}>
-                        <Image src={option.icon} alt={option.name}
-                            width={210}
-                            height={180}
-                            className='h-[180px] w-[210px] hover:rotate-12 cursor-pointer transition-all'
-                        />
-                        <h2 className='mt-2'>{option.name}</h2>
+                    <div>
+                        <UserInputDialog></UserInputDialog>
+                        <div key={index}>
+                            <Image src={option.icon} alt={option.name}
+                                width={210}
+                                height={180}
+                                className='h-[180px] w-[210px] hover:rotate-12 cursor-pointer transition-all'
+                            />
+                            <h2 className='mt-2'>{option.name}</h2>
+                        </div>
                     </div>
                 ))}
             </div>                        
