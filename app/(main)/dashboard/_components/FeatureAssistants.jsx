@@ -31,7 +31,7 @@ function FeatureAssistants() {
                                     height={180}
                                     className='h-[180px] w-[210px] hover:rotate-12 cursor-pointer transition-all'
                                 />
-                                <h2 className='mt-2'>{option.name}</h2>
+                                <h2 className='mt-2 text-center'>{option.name}</h2>
                             </div>
                         </UserInputDialog>
                     </div>
