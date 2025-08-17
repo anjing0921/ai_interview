@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react'
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogDescription,
     DialogHeader,
@@ -46,8 +47,9 @@ function UserInputDialog({children, coachingOption}) {
                                 ))}    
                             </div>
                             <div className='flex gap-5 justify-end mt-5'>
-                                
-                                <Button variant={'ghost'}>Cancel</Button>
+                                <DialogClose asChild>
+                                    <Button variant={'ghost'}>Cancel</Button>
+                                </DialogClose>
                                 
 
                                 <Button disabled={(!topic || !selectedExpert)}>Next</Button>
