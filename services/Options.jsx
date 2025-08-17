@@ -1,4 +1,4 @@
-export const ExpertsList = [
+export const CoachingOptions = [
 
     {
         name: 'BQ Interview',
@@ -29,23 +29,13 @@ export const ExpertsList = [
 
 export const CoachingExpert = [
     {
-        name: 'Joanna',
-        avatar: '/t1.avif',
+        name: 'Rachel',
+        avatar: '/Rachel.jpg',
         pro: false
     },
     {
-        name: 'Salli',
-        avatar: '/t2.jpg',
+        name: 'Mike',
+        avatar: '/Mike.webp',
         pro: false
     },
-    {
-        name: 'Joey',
-        avatar: '/t3.jpg',
-        pro: false
-    },
-    // {
-    //     name: 'Rachel',
-    //     avatar: '/t4.png',
-    //     pro: true
-    // },
 ]
