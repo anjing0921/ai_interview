@@ -15,7 +15,9 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { useMutation } from 'convex/react'
 import { LoaderCircle } from 'lucide-react'
-
+import { useRouter } from 'next/navigation'
+import { UserContext } from '@/app/_context/UserContext'
+// import { toast } from 'sonner'
 
 function UserInputDialog({children, coachingOption}) {
     const [selectedExpert, setSelectedExpert] = useState();
@@ -23,7 +25,8 @@ function UserInputDialog({children, coachingOption}) {
     const createDiscussionRoom = useMutation(api.DiscussionRoom.CreateNewRoom);
     const [loading, setLoading] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
-
+    const router = useRouter();
+    const { userData } = useContext(UserContext);
 
     const OnClickNext = async () => {
         setLoading(true);
@@ -35,6 +38,7 @@ function UserInputDialog({children, coachingOption}) {
         console.log(result);
         setLoading(false); 
         setOpenDialog(false);
+        router.push('/discussion-room/' + result)
     }
 
     return (
