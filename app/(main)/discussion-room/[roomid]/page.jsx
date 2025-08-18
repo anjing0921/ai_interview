@@ -25,6 +25,7 @@ function DiscussionRoom() {
     const recorder = useRef(null)
     const streamingTranscriber = useRef(null);
     const [transcribe, setTranscribe] = useState();
+    const [conversation, setConversation] = useState([]);
     let silenceTimeout;
     let waitForPause;
     let texts = {};
@@ -74,6 +75,17 @@ function DiscussionRoom() {
             }
             console.log("Turn:", turn);
             let msg = ''
+            if (turn.end_of_turn) {
+                console.log(turn.transcript)
+                setConversation(prev => [...prev, {
+                    role: 'user',
+                    content: turn.transcript
+                }]); 
+                console.log(conversation)
+            }
+            
+            
+
             texts[turn.turn_order] = turn.transcript;
             console.log(texts)
             const keys = Object.keys(texts);
