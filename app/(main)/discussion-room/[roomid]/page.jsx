@@ -12,6 +12,7 @@ import { getToken } from '@/services/GlobalServices';
 // import { RealtimeTranscriber } from 'assemblyai';
 import { StreamingTranscriber } from "assemblyai";
 import { Readable } from "stream";
+
 // import recorder from "node-record-lpcm16";
 // const RecordRTC = dynamic(() => import("recordrtc"), { ssr: false });
 // import RecordRTC from 'recordrtc';
@@ -23,7 +24,10 @@ function DiscussionRoom() {
     const [enableMic, setEnableMic] = useState(false);
     const recorder = useRef(null)
     const streamingTranscriber = useRef(null);
+    const [transcribe, setTranscribe] = useState();
     let silenceTimeout;
+    let waitForPause;
+    let texts = {};
     
 
     useEffect(() => {
@@ -68,8 +72,20 @@ function DiscussionRoom() {
             if (!turn.transcript) {
                 return;
             }
+            console.log("Turn:", turn);
+            let msg = ''
+            texts[turn.turn_order] = turn.transcript;
+            console.log(texts)
+            const keys = Object.keys(texts);
+            keys.sort((a, b) => a - b);
 
-            console.log("Turn:", turn.transcript);
+            for (const key of keys) {
+                if (texts[key]) {
+                    msg += `${texts[key]}`
+                }
+            }
+            console.log(msg)
+            setTranscribe(msg);
         });
 
         streamingTranscriber.current.on("error", (err) => {
@@ -167,6 +183,7 @@ function DiscussionRoom() {
                     <h2>Chat section</h2>
                 </div>
                 <h2 className='mt-4 text-gray-400 '>At the end</h2>
+                <h2 className='p-4 border rounded-2xl mt-5'>{transcribe}</h2>
             </div>
         </div>
     )
