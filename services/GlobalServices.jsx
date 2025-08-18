@@ -33,18 +33,18 @@ const openai = new OpenAI({
 //   });
 // const model = 'models/gemini-2.5-flash-preview-native-audio-dialog'
 
-export const AIModel = async (topic, coachingOption, msg) => {
+export const AIModel = async (topic, coachingOption, lastTwoMsg) => {
     try {
         const option = CoachingOptions.find((item) => item.name === coachingOption);
         const PROMPT = option.prompt.replace('{user_topic}', topic);
 
-        console.log(`msg: ${msg}`);
+        console.log(`msg: ${lastTwoMsg}`);
 
         const completion = await openai.chat.completions.create({
             model: "openai/chatgpt-4o-latest",
             messages: [
                 { role: 'assistant', content: PROMPT },
-                { role: 'user', content: msg },
+                ...lastTwoMsg
             ],
         });
 

@@ -88,18 +88,19 @@ function DiscussionRoom() {
 
                 // call ai text model 
                 
-                try {
-                    const aiResp = await AIModel(
-                        DiscussionRoomData.topic,
-                        DiscussionRoomData.coachingOption,
-                        turn.transcript
-                    );
-                    console.log(`aiResp=`, aiResp);
-                    // setConversation(aiResp)
-                    setConversation(prev => [...prev, aiResp])
-                } catch (err) {
-                    console.error("AIModel failed in caller:", err);
-                }
+                // try {
+                //     const lastTwoMsg = conversation.slice(-2)
+                //     const aiResp = await AIModel(
+                //         DiscussionRoomData.topic,
+                //         DiscussionRoomData.coachingOption,
+                //         lastTwoMsg
+                //     );
+                //     console.log(`aiResp=`, aiResp);
+                //     // setConversation(aiResp)
+                //     setConversation(prev => [...prev, aiResp])
+                // } catch (err) {
+                //     console.error("AIModel failed in caller:", err);
+                // }
             }
             
             
@@ -163,6 +164,31 @@ function DiscussionRoom() {
                 .catch((err) => console.error(err));
             }
     }
+    
+    useEffect(() => {
+        // clearTimeout(waitForPause);
+        async function fetchData() {
+            if (conversation[conversation.length - 1]?.role == 'user') {
+                // Calling AI text Model to Get Response
+                const lastTwoMsg = conversation.slice(-2);
+                const aiResp = await AIModel(
+                    DiscussionRoomData.topic,
+                    DiscussionRoomData.coachingOption,
+                    lastTwoMsg);
+
+                // const url = await ConvertTextToSpeech(aiResp.content, DiscussionRoomData.expertName);
+                // console.log(url)
+                // setAudioUrl(url);
+                setConversation(prev => [...prev, aiResp]);
+                // await updateUserTokenMathod(aiResp.content);// Update AI generated TOKEN
+            }
+        }
+        if (DiscussionRoomData) {
+            fetchData();
+        }
+        
+
+    }, [conversation])
 
     const disconnect = async (e) => {
         e.preventDefault();
