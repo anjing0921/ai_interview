@@ -1,16 +1,15 @@
 "use client"
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState, useRef } from 'react'
-import { useMutation, useQuery } from 'convex/react';
+import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { CoachingExpert } from '@/services/Options';
 import Image from 'next/image';
 import { UserButton } from '@stackframe/stack';
 import { Button } from '@/components/ui/button';
 import dynamic from 'next/dynamic';
+// const RecordRTC = dynamic(() => import("recordrtc"));
 // import RecordRTC from 'recordrtc';
-const RecordRTC = dynamic(() => import("recordrtc"), { ssr: false });
-
 
 function DiscussionRoom() {
     const { roomid } = useParams();
@@ -18,6 +17,7 @@ function DiscussionRoom() {
     const [expert, setExpert] = useState();
     const [enableMic, setEnableMic] = useState(false);
     const recorder = useRef(null)
+    let silenceTimeout;
     
 
     useEffect(() => {
@@ -29,8 +29,9 @@ function DiscussionRoom() {
     }, [DiscussionRoomData])
 
     const connectToServer = async () => {
+        setEnableMic(true);
         if (typeof window !== "undefined" && typeof navigator !== "undefined") {
-            // const RecordRTC = (await import("recordrtc")).default; //Importing here
+            const RecordRTC = (await import("recordrtc")).default; //Importing here
             navigator.mediaDevices.getUserMedia({ audio: true })
                 .then((stream) => {
                     recorder.current = new RecordRTC(stream, {
@@ -47,8 +48,10 @@ function DiscussionRoom() {
                             // Reset the silence detection timer on audio input
                             clearTimeout(silenceTimeout);
                             const buffer = await blob.arrayBuffer();
-                            // console.log(buffer)
+                            console.log("ha")
+                            console.log(buffer)
                             // realtimeTranscriber.current.sendAudio(buffer);
+
                             // Restart the silence detection timer
                             silenceTimeout = setTimeout(() => {
                                 console.log('User stopped talking');
@@ -58,11 +61,19 @@ function DiscussionRoom() {
                         },
 
                     });
-                    recorder.current.startRecording();
+                    recorder.current.startRecording();;
                 })
                 .catch((err) => console.error(err));
 
         }
+    }
+
+    const disconnect = async (e) => {
+        e.preventDefault();
+        recorder.current.pauseRecording();
+        recorder.current = null;
+        setEnableMic(false);
+
     }
     
     return (
