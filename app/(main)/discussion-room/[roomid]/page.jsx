@@ -17,6 +17,7 @@ function DiscussionRoom() {
     const [expert, setExpert] = useState();
     const [enableMic, setEnableMic] = useState(false);
     const recorder = useRef(null)
+    const realtimeTranscriber = useRef(null);
     let silenceTimeout;
     
 
@@ -30,6 +31,13 @@ function DiscussionRoom() {
 
     const connectToServer = async () => {
         setEnableMic(true);
+
+        // Init Assembly AI
+        realtimeTranscriber.current = new RealtimeTranscriber({
+            token: "",
+            sample_rate: 16_000
+        })
+
         if (typeof window !== "undefined" && typeof navigator !== "undefined") {
             const RecordRTC = (await import("recordrtc")).default; //Importing here
             navigator.mediaDevices.getUserMedia({ audio: true })
