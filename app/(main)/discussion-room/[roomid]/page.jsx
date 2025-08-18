@@ -1,7 +1,7 @@
 "use client"
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState, useRef } from 'react'
-import { useQuery } from 'convex/react';
+import { useMutation, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { CoachingExpert } from '@/services/Options';
 import Image from 'next/image';
@@ -28,6 +28,8 @@ function DiscussionRoom() {
         ]);
     const [loading, setLoading] = useState(false);
     const [audioUrl, setAudioUrl] = useState();
+    const UpdateConversation = useMutation(api.DiscussionRoom.UpdateConversation)
+    const updateUserToken = useMutation(api.users.UpdateUserToken)
     let silenceTimeout;
     let waitForPause;
     let texts = {};
@@ -212,6 +214,10 @@ function DiscussionRoom() {
         }
         
         setEnableMic(false);
+        await UpdateConversation({
+            id: DiscussionRoomData._id,
+            conversation: conversation
+        })
         setLoading(false)
 
     }
@@ -226,6 +232,8 @@ function DiscussionRoom() {
                         <Image src={expert?.avatar} alt='Avatar' width={200} height={200}
                             className='h-[80px] w-[80px] rounded-full object-cover animate-pulse'/>
                         <h2 className='text-gray-500'>{expert?.name}</h2>
+
+                        <audio src={audioUrl} type="audio/mp3" autoPlay />
                         <div className='p-5 bg-gray-200 px-10 rounded-lg absolute bottom-10 right-10'>
                             <UserButton />
                         </div>
