@@ -8,14 +8,11 @@ import Image from 'next/image';
 import { UserButton } from '@stackframe/stack';
 import { Button } from '@/components/ui/button';
 import dynamic from 'next/dynamic';
-import { getToken } from '@/services/GlobalServices';
-// import { RealtimeTranscriber } from 'assemblyai';
+import { getToken, AIModel } from '@/services/GlobalServices';
 import { StreamingTranscriber } from "assemblyai";
 import { Readable } from "stream";
-
-// import recorder from "node-record-lpcm16";
-// const RecordRTC = dynamic(() => import("recordrtc"), { ssr: false });
-// import RecordRTC from 'recordrtc';
+import { Loader2Icon } from 'lucide-react';
+import ChatBox from './_components/ChatBox';
 
 function DiscussionRoom() {
     const { roomid } = useParams();
@@ -26,6 +23,7 @@ function DiscussionRoom() {
     const streamingTranscriber = useRef(null);
     const [transcribe, setTranscribe] = useState();
     const [conversation, setConversation] = useState([]);
+    const [loading, setLoading] = useState(false);
     let silenceTimeout;
     let waitForPause;
     let texts = {};
@@ -41,6 +39,7 @@ function DiscussionRoom() {
 
     const connectToServer = async () => {
         setEnableMic(true);
+        setLoading(true);
         // Step 1: Fetch a fresh token every time you connect.
         const {token}= await getToken();
         if (!token) {
@@ -61,9 +60,9 @@ function DiscussionRoom() {
         })
         console.log(streamingTranscriber.current)
 
-        streamingTranscriber.current.on("open", ({id}) => {
-            console.log(`Session opened with ID: ${id}`);
-        });
+        // streamingTranscriber.current.on("open", ({id}) => {
+        //     console.log(`Session opened with ID: ${id}`);
+        // });
 
         // streamingTranscriber.current.on('transcript', async (transcript) => {
         //     console.log(transcript);
@@ -75,13 +74,29 @@ function DiscussionRoom() {
             }
             console.log("Turn:", turn);
             let msg = ''
-            if (turn.end_of_turn) {
+            // 1. Add user message to chat
+            if (turn.end_of_turn && turn.end_of_turn_confidence>=0.9) {
                 console.log(turn.transcript)
-                setConversation(prev => [...prev, {
+                setConversation((prev) => [...prev, {
                     role: 'user',
                     content: turn.transcript
                 }]); 
-                console.log(conversation)
+                console.log(`conversation=${conversation}`)
+
+                // call ai text model 
+                
+                try {
+                    const aiResp = await AIModel(
+                        DiscussionRoomData.topic,
+                        DiscussionRoomData.coachingOption,
+                        turn.transcript
+                    );
+                    console.log(`aiResp=`, aiResp);
+                    // setConversation(aiResp)
+                    setConversation(prev => [...prev, aiResp])
+                } catch (err) {
+                    console.error("AIModel failed in caller:", err);
+                }
             }
             
             
@@ -110,7 +125,7 @@ function DiscussionRoom() {
         console.log("Connecting to streaming transcript service");
         await streamingTranscriber.current.connect();
         console.log("Starting recording");
-        
+        setLoading(false)
         if (typeof window !== "undefined" && typeof navigator !== "undefined") {
             const RecordRTC = (await import("recordrtc")).default; //Importing here
             navigator.mediaDevices.getUserMedia({ audio: true })
@@ -129,7 +144,7 @@ function DiscussionRoom() {
                             // Reset the silence detection timer on audio input
                             clearTimeout(silenceTimeout);
                             const buffer = await blob.arrayBuffer();
-                            console.log(buffer)
+                            // console.log(buffer)
                             streamingTranscriber.current.sendAudio(buffer);
                             // Readable.toWeb(buffer).pipeTo(streamingTranscriber.current.stream());
 
@@ -148,6 +163,7 @@ function DiscussionRoom() {
 
     const disconnect = async (e) => {
         e.preventDefault();
+        setLoading(true)
         await streamingTranscriber.current.close();
         // Check if the recorder instance exists before trying to use it
         if (recorder.current) {
@@ -164,9 +180,9 @@ function DiscussionRoom() {
             await streamingTranscriber.current.close();
             streamingTranscriber.current = null;
         }
-        // recorder.current.pauseRecording();
-        // recorder.current = null;
+        
         setEnableMic(false);
+        setLoading(false)
 
     }
     
@@ -185,16 +201,15 @@ function DiscussionRoom() {
                         </div>
                     </div>
                     <div className='mt-5 flex items-center justify-center'>
-                        {!enableMic ? <Button onClick={connectToServer}> Connect</Button>
+                        {!enableMic ? <Button onClick={connectToServer} disable ={loading}>
+                        {loading && <Loader2Icon className='animate-spin' />}Connect</Button>
                         :
-                        <Button variant="destructive" onClick={disconnect}>Disconnect</Button>}
+                        <Button variant="destructive" onClick={disconnect} disable ={loading}>
+                            {loading && <Loader2Icon className='animate-spin' />}
+                            Disconnect</Button>}
                     </div>
                 </div>
-                <div className='h-[60vh] bg-secondary border rounded-4xl
-                flex flex-col items-center justify-center relative'>
-                    <h2>Chat section</h2>
-                </div>
-                <h2 className='mt-4 text-gray-400 '>At the end</h2>
+                <ChatBox conversation={conversation}/>
                 <h2 className='p-4 border rounded-2xl mt-5'>{transcribe}</h2>
             </div>
         </div>
