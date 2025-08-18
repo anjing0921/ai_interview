@@ -3,13 +3,9 @@ import { NextResponse } from "next/server";
 
 const assemblyAi = new AssemblyAI({ apiKey: process.env.ASSEMBLY_API_KEY })
 export async function GET(req) {
-    // const assemblyAi = new AssemblyAI({ apiKey: process.env.ASSEMBLY_API_KEY });
-
-    // const token = await assemblyAi.streaming.createTemporaryToken({ expires_in_seconds: 600 });
-    // return NextResponse.json(token);
     try {
         const token = await assemblyAi.streaming.createTemporaryToken({
-            expires_in_seconds: 600
+            expires_in_seconds: 60
         });
         return NextResponse.json({ token }); // Ensure you return a JSON object with a 'token' property
     } catch (error) {
@@ -18,3 +14,6 @@ export async function GET(req) {
     }
 
 }
+
+// const token = await client.streaming.createTemporaryToken({ expires_in_seconds: 60 });
+

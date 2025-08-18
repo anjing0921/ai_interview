@@ -9,7 +9,8 @@ import { UserButton } from '@stackframe/stack';
 import { Button } from '@/components/ui/button';
 import dynamic from 'next/dynamic';
 import { getToken } from '@/services/GlobalServices';
-import { RealtimeTranscriber } from 'assemblyai';
+// import { RealtimeTranscriber } from 'assemblyai';
+import { StreamingTranscriber } from "assemblyai";
 import { Readable } from "stream";
 // import recorder from "node-record-lpcm16";
 // const RecordRTC = dynamic(() => import("recordrtc"), { ssr: false });
@@ -21,7 +22,7 @@ function DiscussionRoom() {
     const [expert, setExpert] = useState();
     const [enableMic, setEnableMic] = useState(false);
     const recorder = useRef(null)
-    const realtimeTranscriber = useRef(null);
+    const streamingTranscriber = useRef(null);
     let silenceTimeout;
     
 
@@ -36,39 +37,52 @@ function DiscussionRoom() {
     const connectToServer = async () => {
         setEnableMic(true);
         // Step 1: Fetch a fresh token every time you connect.
-        const token = await getToken();
+        const {token}= await getToken();
         if (!token) {
             console.error("Failed to get a valid token. Cannot connect.");
             setEnableMic(false);
             return;
         }
-        console.log("Fetched token successfully.");
-        console.log(token)
-
+        console.log("Fetched token:", token);
 
         // Init Assembly AI
-        realtimeTranscriber.current = new RealtimeTranscriber({
-            token: await getToken(),
-            sample_rate: 16_000
+        streamingTranscriber.current = new StreamingTranscriber({
+            token,
+            sampleRate: 16000,
+            formatTurns: true,
+            endOfTurnConfidenceThreshold: 0.7,
+            minEndOfTurnSilenceWhenConfident: 160,
+            maxTurnSilence: 2400
         })
+        console.log(streamingTranscriber.current)
 
-        realtimeTranscriber.current.on("open", () => {
-            console.log("Connected to AssemblyAI realtime API");
+        streamingTranscriber.current.on("open", ({id}) => {
+            console.log(`Session opened with ID: ${id}`);
         });
 
-        realtimeTranscriber.current.on('transcript', async (transcript) => {
-            console.log(transcript);
-        })
+        // streamingTranscriber.current.on('transcript', async (transcript) => {
+        //     console.log(transcript);
+        // })
 
-        realtimeTranscriber.current.on("error", (err) => {
+        streamingTranscriber.current.on("turn", async (turn) => {
+            if (!turn.transcript) {
+                return;
+            }
+
+            console.log("Turn:", turn.transcript);
+        });
+
+        streamingTranscriber.current.on("error", (err) => {
             console.error("Realtime error:", err);
         });
 
-        realtimeTranscriber.current.on("close", (code, reason) => {
+        streamingTranscriber.current.on("close", (code, reason) => {
         console.log(`Connection closed. Code: ${code}, Reason: ${reason}`);
     });
+        console.log("Connecting to streaming transcript service");
+        await streamingTranscriber.current.connect();
+        console.log("Starting recording");
         
-        await realtimeTranscriber.current.connect();
         if (typeof window !== "undefined" && typeof navigator !== "undefined") {
             const RecordRTC = (await import("recordrtc")).default; //Importing here
             navigator.mediaDevices.getUserMedia({ audio: true })
@@ -83,12 +97,13 @@ function DiscussionRoom() {
                         bufferSize: 4096,
                         audioBitsPerSecond: 128000,
                         ondataavailable: async (blob) => {
-                            if (!realtimeTranscriber.current) return;
+                            if (!streamingTranscriber.current) return;
                             // Reset the silence detection timer on audio input
                             clearTimeout(silenceTimeout);
                             const buffer = await blob.arrayBuffer();
                             console.log(buffer)
-                            realtimeTranscriber.current.sendAudio(buffer);
+                            streamingTranscriber.current.sendAudio(buffer);
+                            // Readable.toWeb(buffer).pipeTo(streamingTranscriber.current.stream());
 
                             // Restart the silence detection timer
                             silenceTimeout = setTimeout(() => {
@@ -105,7 +120,7 @@ function DiscussionRoom() {
 
     const disconnect = async (e) => {
         e.preventDefault();
-        // await realtimeTranscriber.current.close();
+        await streamingTranscriber.current.close();
         // Check if the recorder instance exists before trying to use it
         if (recorder.current) {
             // Pause the recording
@@ -117,9 +132,9 @@ function DiscussionRoom() {
             // After using it, set the reference to null
             recorder.current = null;
         }
-        if (realtimeTranscriber.current) {
-            await realtimeTranscriber.current.close();
-            realtimeTranscriber.current = null;
+        if (streamingTranscriber.current) {
+            await streamingTranscriber.current.close();
+            streamingTranscriber.current = null;
         }
         // recorder.current.pauseRecording();
         // recorder.current = null;
