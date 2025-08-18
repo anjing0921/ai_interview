@@ -34,7 +34,7 @@ function DiscussionRoom() {
 
         // Init Assembly AI
         realtimeTranscriber.current = new RealtimeTranscriber({
-            token: "",
+            token: '',
             sample_rate: 16_000
         })
 
