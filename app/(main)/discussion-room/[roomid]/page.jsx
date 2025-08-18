@@ -1,18 +1,24 @@
 "use client"
 import { useParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { CoachingExpert } from '@/services/Options';
 import Image from 'next/image';
 import { UserButton } from '@stackframe/stack';
 import { Button } from '@/components/ui/button';
+import dynamic from 'next/dynamic';
+// import RecordRTC from 'recordrtc';
+const RecordRTC = dynamic(() => import("recordrtc"), { ssr: false });
 
 
 function DiscussionRoom() {
     const { roomid } = useParams();
     const DiscussionRoomData = useQuery(api.DiscussionRoom.GetDiscussionRoom, { id: roomid });
     const [expert, setExpert] = useState();
+    const [enableMic, setEnableMic] = useState(false);
+    const recorder = useRef(null)
+    
 
     useEffect(() => {
         if (DiscussionRoomData) {
@@ -21,9 +27,46 @@ function DiscussionRoom() {
             setExpert(Expert);
         }
     }, [DiscussionRoomData])
+
+    const connectToServer = async () => {
+        if (typeof window !== "undefined" && typeof navigator !== "undefined") {
+            // const RecordRTC = (await import("recordrtc")).default; //Importing here
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then((stream) => {
+                    recorder.current = new RecordRTC(stream, {
+                        type: 'audio',
+                        mimeType: 'audio/webm;codecs=pcm',
+                        recorderType: RecordRTC.StereoAudioRecorder,
+                        timeSlice: 250,
+                        desiredSampRate: 16000,
+                        numberOfAudioChannels: 1,
+                        bufferSize: 4096,
+                        audioBitsPerSecond: 128000,
+                        ondataavailable: async (blob) => {
+                            // if (!realtimeTranscriber.current) return;
+                            // Reset the silence detection timer on audio input
+                            clearTimeout(silenceTimeout);
+                            const buffer = await blob.arrayBuffer();
+                            // console.log(buffer)
+                            // realtimeTranscriber.current.sendAudio(buffer);
+                            // Restart the silence detection timer
+                            silenceTimeout = setTimeout(() => {
+                                console.log('User stopped talking');
+                                // Handle user stopped talking (e.g., send final transcript, stop recording, etc.)
+                            }, 2000);
+
+                        },
+
+                    });
+                    recorder.current.startRecording();
+                })
+                .catch((err) => console.error(err));
+
+        }
+    }
     
     return (
-        <div>
+        <div className='-mt-12'>
             <h2 className='text-lg font-bold'>{DiscussionRoomData?.coachingOption}</h2>
             <div className='mt-5 grid grid-cols-1 lg:grid-cols-3 gap-10'>
                 <div className=' lg:col-span-2'>
@@ -37,7 +80,9 @@ function DiscussionRoom() {
                         </div>
                     </div>
                     <div className='mt-5 flex items-center justify-center'>
-                        <Button>Connect</Button>
+                        {!enableMic ? <Button onClick={connectToServer}> Connect</Button>
+                        :
+                        <Button variant="destructive" onClick={disconnect}>Disconnect</Button>}
                     </div>
                 </div>
                 <div className='h-[60vh] bg-secondary border rounded-4xl

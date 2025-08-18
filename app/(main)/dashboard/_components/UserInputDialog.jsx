@@ -17,7 +17,6 @@ import { useMutation } from 'convex/react'
 import { LoaderCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { UserContext } from '@/app/_context/UserContext'
-// import { toast } from 'sonner'
 
 function UserInputDialog({children, coachingOption}) {
     const [selectedExpert, setSelectedExpert] = useState();
