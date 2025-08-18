@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { UserButton } from '@stackframe/stack';
 import { Button } from '@/components/ui/button';
 import dynamic from 'next/dynamic';
-import { getToken, AIModel } from '@/services/GlobalServices';
+import { AIModel, ConvertTextToSpeech, getToken } from '@/services/GlobalServices';
 import { StreamingTranscriber } from "assemblyai";
 import { Readable } from "stream";
 import { Loader2Icon } from 'lucide-react';
@@ -27,6 +27,7 @@ function DiscussionRoom() {
             { role: 'user', content: "hello" },
         ]);
     const [loading, setLoading] = useState(false);
+    const [audioUrl, setAudioUrl] = useState();
     let silenceTimeout;
     let waitForPause;
     let texts = {};
@@ -176,9 +177,9 @@ function DiscussionRoom() {
                     DiscussionRoomData.coachingOption,
                     lastTwoMsg);
 
-                // const url = await ConvertTextToSpeech(aiResp.content, DiscussionRoomData.expertName);
-                // console.log(url)
-                // setAudioUrl(url);
+                const url = await ConvertTextToSpeech(aiResp.content, DiscussionRoomData.expertName);
+                console.log(url)
+                setAudioUrl(url);
                 setConversation(prev => [...prev, aiResp]);
                 // await updateUserTokenMathod(aiResp.content);// Update AI generated TOKEN
             }
