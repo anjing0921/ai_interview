@@ -23,10 +23,7 @@ function DiscussionRoom() {
     const recorder = useRef(null)
     const streamingTranscriber = useRef(null);
     const [transcribe, setTranscribe] = useState();
-    const [conversation, setConversation] = useState([
-            { role: 'assistant', content: "hi" },
-            { role: 'user', content: "hello" },
-        ]);
+    const [conversation, setConversation] = useState([]);
     const [loading, setLoading] = useState(false);
     const [audioUrl, setAudioUrl] = useState();
     const [enableFeedbackNotes, setEnableFeedbackNotes] = useState(false);

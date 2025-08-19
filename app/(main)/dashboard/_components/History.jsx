@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { api } from '@/convex/_generated/api';
 import { CoachingOptions } from '@/services/Options';
 import { useConvex } from 'convex/react'
-// import moment from 'moment';
+import moment from 'moment';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useContext, useEffect, useState } from 'react'
@@ -26,6 +26,7 @@ function History() {
         });
         console.log(result);
         setDiscussionRoomList(result);
+        // console.log(discussionRoomList)
     }
 
     const GetAbstractImages = (option) => {
@@ -41,24 +42,23 @@ function History() {
             {discussionRoomList?.length == 0 && <h2 className='text-gray-400'>Your don't have any previous lectures</h2>}
 
             <div className='mt-5'>
-                {discussionRoomList.map((item, index) => (item.coachingOption == 'Topic Base Lecture' || item.coachingOption == 'Learn Language' || item.coachingOption == 'Meditation') &&
+                {discussionRoomList.map((item, index) => (item.coachingOption == 'BQ Interview' || item.coachingOption == 'Code Interview' || item.coachingOption == 'OOD Interview') &&
                     (
-                        <BlurFade delay={0.25 * index} key={index} >
-                            <div key={index} className='border-b-[1px] pb-3 mb-4 group flex justify-between items-center cursor-pointer'>
-                                <div className='flex gap-7 items-center'>
-                                    <Image src={GetAbstractImages(item.coachingOption)} alt='abstract'
-                                        width={70} height={70} className='rounded-full h-[50px] w-[50px]' />
-                                    <div>
-                                        <h2 className='font-bold'>{item.topic}</h2>
-                                        <h2 className='text-gray-400'>{item.coachingOption}</h2>
-                                        <h2 className='text-gray-400 text-sm'>{moment(item._creationTime).fromNow()}</h2>
-                                    </div>
+                        <div key={index} className='border-b-[1px] pb-3 mb-4 group flex justify-between items-center cursor-pointer'>
+                            <div className='flex gap-7 items-center'>
+                                <Image src={GetAbstractImages(item.coachingOption)} alt='abstract'
+                                    width={70} height={70} className='rounded-full h-[50px] w-[50px]' />
+                                <div>
+                                    <h2 className='font-bold'>{item.topic}</h2>
+                                    <h2 className='text-gray-400'>{item.coachingOption}</h2>
+                                    <h2 className='text-gray-400 text-sm'>{moment(item._creationTime).fromNow()}</h2>
                                 </div>
-                                <Link href={'/view-summery/' + item._id}>
-                                    <Button variant='outline' className='invisible group-hover:visible'>View Notes</Button>
-                                </Link>
                             </div>
-                        </BlurFade>
+                            <Link href={'/view-summery/' + item._id}>
+                                <Button variant='outline' className='invisible group-hover:visible'>View Notes</Button>
+                            </Link>
+                        </div>
+                        
                     ))}
             </div>
         </div>
