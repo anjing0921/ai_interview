@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 
 function ChatBox({conversation, enableFeedbackNotes, coachingOption}) {
     const [loading, setLoading] = useState(false);
-    const updateSummery = useMutation(api.DiscussionRoom.UpdateSummery)
+    const updateSummary = useMutation(api.DiscussionRoom.UpdateSummary)
     const { roomid } = useParams();
     const GenerateFeedbackNotes = async () => {
         setLoading(true);
@@ -19,9 +19,9 @@ function ChatBox({conversation, enableFeedbackNotes, coachingOption}) {
             const result = await AIModelToGenerateFeedbackAndNotes(coachingOption, conversation);
             console.log(result.content);
 
-            await updateSummery({
+            await updateSummary({
                 id: roomid,
-                summery: result.content
+                summary: result.content
             })
             setLoading(false);
             toast('Feedback/Notes Saved!')

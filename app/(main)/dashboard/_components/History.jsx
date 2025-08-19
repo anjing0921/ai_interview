@@ -54,7 +54,7 @@ function History() {
                                     <h2 className='text-gray-400 text-sm'>{moment(item._creationTime).fromNow()}</h2>
                                 </div>
                             </div>
-                            <Link href={'/view-summery/' + item._id}>
+                            <Link href={'/view-summary/' + item._id}>
                                 <Button variant='outline' className='invisible group-hover:visible'>View Notes</Button>
                             </Link>
                         </div>

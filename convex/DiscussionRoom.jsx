@@ -42,14 +42,14 @@ export const UpdateConversation = mutation({
     }
 })
 
-export const UpdateSummery = mutation({
+export const UpdateSummary = mutation({
     args: {
         id: v.id('DiscussionRoom'),
-        summery: v.any()
+        summary: v.any()
     },
     handler: async (ctx, args) => {
         await ctx.db.patch(args.id, {
-            summery: args.summery
+            summary: args.summary
         })
     }
 })

@@ -1,0 +1,74 @@
+import axios from "axios"
+// import OpenAI from "openai"
+import { CoachingOptions } from "./Options";
+import {
+  GoogleGenAI,
+  LiveServerMessage,
+  MediaResolution,
+  Modality,
+  Session,
+} from '@google/genai';
+// import mime from 'mime';
+// import { writeFile } from 'fs';
+// import { PollyClient, SynthesizeSpeechCommand } from "@aws-sdk/client-polly";
+// import { ElevenLabsClient, play } from "elevenlabs";
+
+export const getToken = async () => {
+    // const result = await axios.get('/api/getToken');
+    // console.log(result.data)
+    const res = await fetch("/api/getToken");
+    const data = await res.json()
+    console.log(data)
+    return data
+}
+
+// const openai = new OpenAI({
+//     baseURL: "https://openrouter.ai/api/v1",
+//     apiKey: process.env.NEXT_PUBLIC_AI_OPENROUTER,
+//     dangerouslyAllowBrowser: true
+// })
+
+const ai = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY,
+  });
+const model = 'models/gemini-2.5-flash-preview-native-audio-dialog'
+
+
+
+export const AIModel = async (topic, coachingOption, msg) => {
+
+    const option = CoachingOptions.find((item) => item.name == coachingOption)
+    const PROMPT = (option.prompt).replace('{user_topic}', topic)
+    console.log(`msg ${msg}   `)
+
+    const session = await ai.live.connect({
+        model,
+        callbacks: {
+        onopen: function () {
+            console.debug('Opened');
+        },
+        onmessage: function (message: LiveServerMessage) {
+            responseQueue.push(message);
+        },
+        onerror: function (e: ErrorEvent) {
+            console.debug('Error:', e.message);
+        },
+        onclose: function (e: CloseEvent) {
+            console.debug('Close:', e.reason);
+        },
+        },
+        config
+    });
+
+    
+
+    const completion = await openai.chat.completions.create({
+        model: "google/gemini-2.0-flash-exp:free",
+        messages: [
+            { role: 'assistant', content: PROMPT },
+            { role: 'user', content: msg },
+        ],
+    })
+    // console.log(completion.choices[0].message)
+    return completion?.choices[0]?.message;
+}
