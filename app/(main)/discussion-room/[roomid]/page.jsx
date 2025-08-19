@@ -13,6 +13,7 @@ import { StreamingTranscriber } from "assemblyai";
 import { Readable } from "stream";
 import { Loader2Icon } from 'lucide-react';
 import ChatBox from './_components/ChatBox';
+import { toast } from 'sonner';
 
 function DiscussionRoom() {
     const { roomid } = useParams();
@@ -28,6 +29,7 @@ function DiscussionRoom() {
         ]);
     const [loading, setLoading] = useState(false);
     const [audioUrl, setAudioUrl] = useState();
+    const [enableFeedbackNotes, setEnableFeedbackNotes] = useState(false);
     const UpdateConversation = useMutation(api.DiscussionRoom.UpdateConversation)
     const updateUserToken = useMutation(api.users.UpdateUserToken)
     let silenceTimeout;
@@ -88,26 +90,8 @@ function DiscussionRoom() {
                     content: turn.transcript
                 }]); 
                 console.log(`conversation=${conversation}`)
-
-                // call ai text model 
-                
-                // try {
-                //     const lastTwoMsg = conversation.slice(-2)
-                //     const aiResp = await AIModel(
-                //         DiscussionRoomData.topic,
-                //         DiscussionRoomData.coachingOption,
-                //         lastTwoMsg
-                //     );
-                //     console.log(`aiResp=`, aiResp);
-                //     // setConversation(aiResp)
-                //     setConversation(prev => [...prev, aiResp])
-                // } catch (err) {
-                //     console.error("AIModel failed in caller:", err);
-                // }
             }
             
-            
-
             texts[turn.turn_order] = turn.transcript;
             console.log(texts)
             const keys = Object.keys(texts);
@@ -133,6 +117,7 @@ function DiscussionRoom() {
         await streamingTranscriber.current.connect();
         console.log("Starting recording");
         setLoading(false)
+        toast('Connected...')
         if (typeof window !== "undefined" && typeof navigator !== "undefined") {
             const RecordRTC = (await import("recordrtc")).default; //Importing here
             navigator.mediaDevices.getUserMedia({ audio: true })
@@ -214,11 +199,13 @@ function DiscussionRoom() {
         }
         
         setEnableMic(false);
+        toast('Disconnected!')
         await UpdateConversation({
             id: DiscussionRoomData._id,
             conversation: conversation
         })
         setLoading(false)
+        setEnableFeedbackNotes(true);
 
     }
     
@@ -247,7 +234,10 @@ function DiscussionRoom() {
                             Disconnect</Button>}
                     </div>
                 </div>
-                <ChatBox conversation={conversation}/>
+                <ChatBox conversation={conversation}
+                enableFeedbackNotes={enableFeedbackNotes}
+                coachingOption={DiscussionRoomData?.coachingOption}
+                />
                 <h2 className='p-4 border rounded-2xl mt-5'>{transcribe}</h2>
             </div>
         </div>

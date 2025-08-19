@@ -82,3 +82,19 @@ export const ConvertTextToSpeech = async (text, expertName) => {
     }
 
 }
+
+export const AIModelToGenerateFeedbackAndNotes = async (coachingOption, conversation) => {
+
+    const option = CoachingOptions.find((item) => item.name == coachingOption)
+    const PROMPT = (option.summeryPrompt);
+
+    const completion = await openai.chat.completions.create({
+        model: "openai/gpt-4o-mini",
+        messages: [
+            ...conversation,
+            { role: 'assistant', content: PROMPT },
+        ],
+    })
+    // console.log(completion.choices[0].message)
+    return completion?.choices[0]?.message;
+}

@@ -17,6 +17,7 @@ import { useMutation } from 'convex/react'
 import { LoaderCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { UserContext } from '@/app/_context/UserContext'
+import { toast } from 'sonner'
 
 function UserInputDialog({children, coachingOption}) {
     const [selectedExpert, setSelectedExpert] = useState();
@@ -33,6 +34,7 @@ function UserInputDialog({children, coachingOption}) {
             topic: topic,
             coachingOption: coachingOption?.name,
             expertName: selectedExpert,
+            uid: userData?._id
         })
         console.log(result);
         setLoading(false); 
