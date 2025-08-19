@@ -1,12 +1,9 @@
 "use client"
 import React from 'react'
 import { useUser } from '@stackframe/stack'
-import { Button } from '@/components/ui/button';
 import { CoachingOptions } from '@/services/Options';
 import Image from 'next/image';
 import UserInputDialog from './UserInputDialog';
-
-
 
 function FeatureAssistants() {
     const user = useUser();
@@ -18,7 +15,6 @@ function FeatureAssistants() {
                     <h2 className='font-medium text-gray-500'>My Workspace</h2>
                     <h2 className='text-3xl font-bold'>Welcome back, {user?.displayName}</h2>
                 </div>
-                <Button>Profile</Button>
             </div>
 
             <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-10 mt-10'>

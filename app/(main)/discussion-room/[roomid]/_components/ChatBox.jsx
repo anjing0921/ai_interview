@@ -5,7 +5,7 @@ import { useMutation } from 'convex/react';
 import { LoaderCircle } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import React, { useState } from 'react'
-// import ReactMarkdown from 'react-markdown';
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner';
 
 
@@ -13,6 +13,7 @@ function ChatBox({conversation, enableFeedbackNotes, coachingOption}) {
     const [loading, setLoading] = useState(false);
     const updateSummary = useMutation(api.DiscussionRoom.UpdateSummary)
     const { roomid } = useParams();
+    const router = useRouter();
     const GenerateFeedbackNotes = async () => {
         setLoading(true);
         try {
@@ -25,6 +26,7 @@ function ChatBox({conversation, enableFeedbackNotes, coachingOption}) {
             })
             setLoading(false);
             toast('Feedback/Notes Saved!')
+            router.push('/dashboard/')
         }
         catch (e) {
             setLoading(false);

@@ -6,7 +6,6 @@ import moment from 'moment';
 import Image from 'next/image';
 import { useParams } from 'next/navigation'
 import React from 'react'
-// import ChatBox from '../../discussion-room/[roomid]/_components/ChatBox';
 import SummaryBox from '../_components/SummaryBox';
 
 function ViewSummary() {
