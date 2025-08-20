@@ -9,6 +9,9 @@ function AppHeader() {
                     width={120}
                     height={160}
             />
+            <h2>
+                let's sharp your interview 
+            </h2>
             <UserButton/>
             
         </div>
