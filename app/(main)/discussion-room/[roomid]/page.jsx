@@ -33,7 +33,6 @@ function DiscussionRoom() {
     let waitForPause;
     let texts = {};
     
-
     useEffect(() => {
         if (DiscussionRoomData) {
             const Expert = CoachingExpert.find(item => item.name == DiscussionRoomData.expertName);
@@ -65,19 +64,10 @@ function DiscussionRoom() {
         })
         console.log(streamingTranscriber.current)
 
-        // streamingTranscriber.current.on("open", ({id}) => {
-        //     console.log(`Session opened with ID: ${id}`);
-        // });
-
-        // streamingTranscriber.current.on('transcript', async (transcript) => {
-        //     console.log(transcript);
-        // })
-
         streamingTranscriber.current.on("turn", async (turn) => {
             if (!turn.transcript) {
                 return;
             }
-            console.log("Turn:", turn);
             let msg = ''
             // 1. Add user message to chat
             if (turn.end_of_turn && turn.end_of_turn_confidence>=0.9) {
@@ -133,9 +123,7 @@ function DiscussionRoom() {
                             // Reset the silence detection timer on audio input
                             clearTimeout(silenceTimeout);
                             const buffer = await blob.arrayBuffer();
-                            // console.log(buffer)
                             streamingTranscriber.current.sendAudio(buffer);
-                            // Readable.toWeb(buffer).pipeTo(streamingTranscriber.current.stream());
 
                             // Restart the silence detection timer
                             silenceTimeout = setTimeout(() => {
@@ -165,14 +153,12 @@ function DiscussionRoom() {
                 console.log(url)
                 setAudioUrl(url);
                 setConversation(prev => [...prev, aiResp]);
-                // await updateUserTokenMathod(aiResp.content);// Update AI generated TOKEN
             }
         }
         if (DiscussionRoomData) {
             fetchData();
         }
         
-
     }, [conversation])
 
     const disconnect = async (e) => {
@@ -183,10 +169,6 @@ function DiscussionRoom() {
         if (recorder.current) {
             // Pause the recording
             recorder.current.pauseRecording();
-
-            // Optional: you may want to destroy the recorder to free up resources
-            // recorder.current.destroy();
-
             // After using it, set the reference to null
             recorder.current = null;
         }

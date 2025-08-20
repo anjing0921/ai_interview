@@ -81,13 +81,10 @@ function UserInputDialog({children, coachingOption}) {
                                     Next</Button>
                             </div>
                         </div>
-
-
                     </DialogDescription>
                 </DialogHeader>
             </DialogContent>
         </Dialog>
     )
 }
-
 export default UserInputDialog

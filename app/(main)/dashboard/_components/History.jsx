@@ -26,7 +26,6 @@ function History() {
         });
         console.log(result);
         setDiscussionRoomList(result);
-        // console.log(discussionRoomList)
     }
 
     const GetAbstractImages = (option) => {
@@ -58,7 +57,6 @@ function History() {
                                 <Button variant='outline' className='invisible group-hover:visible'>View Notes</Button>
                             </Link>
                         </div>
-                        
                     ))}
             </div>
         </div>
