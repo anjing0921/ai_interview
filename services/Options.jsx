@@ -16,7 +16,7 @@ export const CoachingOptions = [
         abstract: '/ab3.png'
     },
     {
-        name: 'OOD Interview',
+        name: 'Object-Oriented Programming Interview',
         icon: '/OOD.jpg',
         prompt: 'You are a helpful AI voice coach assisting users in learning {user_topic}. Provide pronunciation guidance, vocabulary tips, and interactive exercises. Keep responses friendly, engaging, and concise, ensuring clarity within 120 characters.',
         summaryPrompt: 'As per conversation generate a notes depends in well structure',

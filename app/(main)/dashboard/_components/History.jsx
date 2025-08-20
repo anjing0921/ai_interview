@@ -41,7 +41,7 @@ function History() {
             {discussionRoomList?.length == 0 && <h2 className='text-gray-400'>Your don't have any previous lectures</h2>}
 
             <div className='mt-5'>
-                {discussionRoomList.map((item, index) => (item.coachingOption == 'BQ Interview' || item.coachingOption == 'Code Interview' || item.coachingOption == 'OOD Interview') &&
+                {discussionRoomList.map((item, index) => (item.coachingOption == 'BQ Interview' || item.coachingOption == 'Code Interview' || item.coachingOption == 'Object-Oriented Programming Interview') &&
                     (
                         <div key={index} className='border-b-[1px] pb-3 mb-4 group flex justify-between items-center cursor-pointer'>
                             <div className='flex gap-7 items-center'>

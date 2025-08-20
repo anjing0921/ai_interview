@@ -23,9 +23,9 @@ function FeatureAssistants() {
                         <UserInputDialog coachingOption={option}>
                             <div key={index}>
                                 <Image src={option.icon} alt={option.name}
-                                    width={210}
+                                    width={240}
                                     height={180}
-                                    className='h-[180px] w-[210px] hover:rotate-12 cursor-pointer transition-all'
+                                    className='h-[180px] w-[240px] hover:rotate-12 cursor-pointer transition-all'
                                 />
                                 <h2 className='mt-2 text-center'>{option.name}</h2>
                             </div>

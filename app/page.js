@@ -3,9 +3,12 @@ import Image from "next/image";
 import { Button } from '@/components/ui/button'
 import AppHeader from "./(main)/_components/AppHeader";
 import { useRouter } from 'next/navigation'
+import { useUser } from '@stackframe/stack'
 
 export default function Home() {
     const router = useRouter();
+    // const showDashButton = False;
+    const user = useUser();
 
     const OnClickSignOn = () => {
         console.log("Button clicked!")
@@ -24,7 +27,7 @@ export default function Home() {
                                             width={1410}
                                             height={760}
                                             className="w-full h-auto"/>
-                <div className="absolute top-30 left-1/2 -translate-x-1/2" >
+                {/* <div className="absolute top-30 left-1/2 -translate-x-1/2" >
                     <Button 
                     onClick={OnClickSignOn}
                     >Get started</Button>
@@ -33,6 +36,14 @@ export default function Home() {
                     <Button 
                     onClick={OnClickDashboard}
                     >Open your dashboard</Button>
+                </div> */}
+
+                <div className="absolute top-30 left-1/2 -translate-x-1/2">
+                        {!user ? <Button onClick={OnClickSignOn}>
+                        Get started</Button>
+                        :
+                        <Button onClick={OnClickDashboard} >
+                        Open your dashboard</Button>}
                 </div>
 
             </div>
