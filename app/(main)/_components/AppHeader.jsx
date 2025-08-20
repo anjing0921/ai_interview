@@ -9,9 +9,11 @@ function AppHeader() {
                     width={120}
                     height={160}
             />
-            <h2>
-                let's sharp your interview 
-            </h2>
+            <div>
+                <h2 className='text-3xl font-bold text-primary'>
+                    let's sharp your interview 
+                </h2>
+            </div>
             <UserButton/>
             
         </div>

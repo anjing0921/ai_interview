@@ -31,9 +31,7 @@ function ChatBox({conversation, enableFeedbackNotes, coachingOption}) {
         catch (e) {
             setLoading(false);
             toast('Internal server error, Try again')
-
         }
-
     }
     
     return (
@@ -50,17 +48,14 @@ function ChatBox({conversation, enableFeedbackNotes, coachingOption}) {
                                 :
                                 <h2 className='p-1 px-2 bg-gray-200 mt-2 inline-block rounded-md justify-end'>{item?.content}</h2>}
                     </div>
-
                         ))}
-                    </div>
-                    
+                    </div>  
             </div>
             {!enableFeedbackNotes ?
                 <h2 className='mt-4 text-gray-400 text-sm'></h2>
                 : <Button onClick={GenerateFeedbackNotes} disabled={loading} className='mt-7 w-full'>
                     {loading && <LoaderCircle className='animate-spin' />}
                     Generate Feedback/Notes</Button>}
-        
         </div>
     )
 }
