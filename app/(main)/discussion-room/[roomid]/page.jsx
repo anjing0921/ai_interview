@@ -29,6 +29,7 @@ function DiscussionRoom() {
     const [enableFeedbackNotes, setEnableFeedbackNotes] = useState(false);
     const UpdateConversation = useMutation(api.DiscussionRoom.UpdateConversation)
     const updateUserToken = useMutation(api.users.UpdateUserToken)
+    const processedUserTurnIds = new Set(); 
     let silenceTimeout;
     let waitForPause;
     let texts = {};
@@ -71,11 +72,44 @@ function DiscussionRoom() {
             let msg = ''
             // 1. Add user message to chat
             if (turn.end_of_turn && turn.end_of_turn_confidence>=0.9) {
+                const finalText = turn.transcript.trim();
                 console.log(turn.transcript)
-                setConversation((prev) => [...prev, {
-                    role: 'user',
-                    content: turn.transcript
-                }]); 
+                // setConversation((prev) => [...prev, {
+                //     role: 'user',
+                //     content: turn.transcript
+                // }]); 
+                // setConversation((prev) => {
+                // // Check if the last message in the conversation is a duplicate of the current turn
+                // const lastMessage = prev[prev.length - 1];
+                // if (lastMessage && lastMessage.role === 'user' && lastMessage.content === turn.transcript) {
+                //     return prev; // Do not add the message again
+                // }
+                // // If it's a new message, add it to the conversation
+                // return [...prev, {
+                //     role: 'user',
+                //     content: turn.transcript
+                // }];
+                // });
+                // setConversation(prev => {
+                // const last = prev[prev.length - 1];
+                // // If last message is already from user, replace it
+                // if (last?.role === 'user') {
+                //     const newPrev = [...prev];
+                //     newPrev[newPrev.length - 1] = { role: 'user', content: finalText };
+                //     return newPrev;
+                // }
+                // // Otherwise, append new user message
+                // return [...prev, { role: 'user', content: finalText }];
+                // });
+                setConversation(prev => {
+                    const last = prev[prev.length - 1];
+                    if (last?.role === 'user') {
+                        const newPrev = [...prev];
+                        newPrev[newPrev.length - 1] = { role: 'user', content: finalText, turnId: turn.turn_order }; // CHANGED
+                        return newPrev;
+                    }
+                    return [...prev, { role: 'user', content: finalText, turnId: turn.turn_order }]; // CHANGED
+                });
                 console.log(`conversation=${conversation}`)
             }
             
@@ -141,6 +175,9 @@ function DiscussionRoom() {
     useEffect(() => {
         // clearTimeout(waitForPause);
         async function fetchData() {
+            const lastMsg = conversation[conversation.length - 1];
+            if (!lastMsg || lastMsg.role !== 'user') return;
+
             if (conversation[conversation.length - 1]?.role == 'user') {
                 // Calling AI text Model to Get Response
                 const lastTwoMsg = conversation.slice(-2);
@@ -159,7 +196,7 @@ function DiscussionRoom() {
             fetchData();
         }
         
-    }, [conversation])
+    }, [conversation, DiscussionRoomData])
 
     const disconnect = async (e) => {
         e.preventDefault();
@@ -205,15 +242,6 @@ function DiscussionRoom() {
                         <div className='p-5 bg-gray-200 px-10 rounded-lg absolute bottom-10 right-10'>
                             <UserButton />
                         </div>
-                        {/* {!isCameraEnabled ? <div className='p-5 bg-gray-200 px-10 rounded-lg absolute bottom-10 right-10'>
-                            <UserButton />
-                        </div> :
-                            <div className='absolute bottom-10 right-10'>
-                                <Webcam height={80}
-                                    width={130}
-                                    className='rounded-2xl'
-                                />
-                            </div>} */}
                         
                     </div>
                     <div className='mt-5 flex items-center justify-center'>
@@ -237,40 +265,6 @@ function DiscussionRoom() {
                 <h2 className='p-4 border rounded-2xl mt-5'>{transcribe}</h2>
             </div>}
         </div>
-        // <div className='-mt-12'>
-        //     <h2 className='text-lg font-bold'>{DiscussionRoomData?.coachingOption}</h2>
-        //     <div className='mt-5 grid grid-cols-1 lg:grid-cols-3 gap-10'>
-        //         <div className=' lg:col-span-2'>
-        //             <div className='h-[60vh] bg-secondary border rounded-4xl
-        //             flex flex-col items-center justify-center relative'>
-        //                 <Image src={expert?.avatar} alt='Avatar' width={200} height={200}
-        //                     className='h-[80px] w-[80px] rounded-full object-cover animate-pulse'/>
-        //                 <h2 className='text-gray-500'>{expert?.name}</h2>
-
-        //                 <audio src={audioUrl} type="audio/mp3" autoPlay />
-        //                 <div className='p-5 bg-gray-200 px-10 rounded-lg absolute bottom-10 right-10'>
-        //                     <UserButton />
-        //                 </div>
-        //             </div>
-        //             <div className='mt-5 flex items-center justify-center'>
-        //                 {!enableMic ? <Button onClick={connectToServer} disable ={loading}>
-        //                 {loading && <Loader2Icon className='animate-spin' />}Connect</Button>
-        //                 :
-        //                 <Button variant="destructive" onClick={disconnect} disable ={loading}>
-        //                     {loading && <Loader2Icon className='animate-spin' />}
-        //                     Disconnect</Button>}
-        //             </div>
-        //         </div>
-        //         <div>
-        //             <ChatBox conversation={conversation}
-        //             enableFeedbackNotes={enableFeedbackNotes}
-        //             coachingOption={DiscussionRoomData?.coachingOption}
-        //             />
-        //         </div>
-        //     {transcribe && <div>
-        //         <h2 className='p-4 border rounded-2xl mt-5'>{transcribe}</h2>
-        //     </div>}
-        // </div>
     )
 }
 

@@ -45,10 +45,6 @@ export const AIModel = async (topic, coachingOption, lastTwoMsg) => {
         console.error("AIModel error:", err);
         throw err;  // rethrow so caller can catch
     }
-
-
-
-
 }
 
 export const ConvertTextToSpeech = async (text, expertName) => {
