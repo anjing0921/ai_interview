@@ -39,6 +39,7 @@ function UserInputDialog({children, coachingOption}) {
         console.log(result);
         setLoading(false); 
         setOpenDialog(false);
+        toast('Connecting to discussion room')
         router.push('/discussion-room/' + result)
     }
 
@@ -75,7 +76,6 @@ function UserInputDialog({children, coachingOption}) {
                                     <Button variant={'ghost'}>Cancel</Button>
                                 </DialogClose>
                                 
-
                                 <Button disabled={(!topic || !selectedExpert || loading)} onClick={OnClickNext}>
                                     {loading && <LoaderCircle className='animate-spin' />}
                                     Next</Button>

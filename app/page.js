@@ -27,17 +27,6 @@ export default function Home() {
                                             width={1410}
                                             height={760}
                                             className="w-full h-auto"/>
-                {/* <div className="absolute top-30 left-1/2 -translate-x-1/2" >
-                    <Button 
-                    onClick={OnClickSignOn}
-                    >Get started</Button>
-                </div>
-                <div className="absolute top-20 left-1/2 -translate-x-1/2" >
-                    <Button 
-                    onClick={OnClickDashboard}
-                    >Open your dashboard</Button>
-                </div> */}
-
                 <div className="absolute top-30 left-1/2 -translate-x-1/2">
                         {!user ? <Button onClick={OnClickSignOn}>
                         Get started</Button>

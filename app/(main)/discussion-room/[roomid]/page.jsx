@@ -192,34 +192,85 @@ function DiscussionRoom() {
         <div className='-mt-12'>
             <h2 className='text-lg font-bold'>{DiscussionRoomData?.coachingOption}</h2>
             <div className='mt-5 grid grid-cols-1 lg:grid-cols-3 gap-10'>
-                <div className=' lg:col-span-2'>
-                    <div className='h-[60vh] bg-secondary border rounded-4xl
-                    flex flex-col items-center justify-center relative'>
-                        <Image src={expert?.avatar} alt='Avatar' width={200} height={200}
-                            className='h-[80px] w-[80px] rounded-full object-cover animate-pulse'/>
+                <div className='lg:col-span-2'>
+                    <div className=' h-[60vh] bg-secondary border rounded-4xl
+                flex flex-col items-center justify-center relative
+                '>
+                        {expert?.avatar && <Image src={expert?.avatar} alt='Avatar' width={200} height={200}
+                            className='h-[80px] w-[80px] rounded-full object-cover animate-pulse'
+                        />}
                         <h2 className='text-gray-500'>{expert?.name}</h2>
 
                         <audio src={audioUrl} type="audio/mp3" autoPlay />
                         <div className='p-5 bg-gray-200 px-10 rounded-lg absolute bottom-10 right-10'>
                             <UserButton />
                         </div>
+                        {/* {!isCameraEnabled ? <div className='p-5 bg-gray-200 px-10 rounded-lg absolute bottom-10 right-10'>
+                            <UserButton />
+                        </div> :
+                            <div className='absolute bottom-10 right-10'>
+                                <Webcam height={80}
+                                    width={130}
+                                    className='rounded-2xl'
+                                />
+                            </div>} */}
+                        
                     </div>
                     <div className='mt-5 flex items-center justify-center'>
-                        {!enableMic ? <Button onClick={connectToServer} disable ={loading}>
-                        {loading && <Loader2Icon className='animate-spin' />}Connect</Button>
-                        :
-                        <Button variant="destructive" onClick={disconnect} disable ={loading}>
-                            {loading && <Loader2Icon className='animate-spin' />}
-                            Disconnect</Button>}
+                        {!enableMic ? <Button onClick={connectToServer} disabled={loading}>
+                            {loading && <Loader2Icon className='animate-spin' />} Connect</Button>
+                            :
+                            <Button variant="destructive" onClick={disconnect} disabled={loading}>
+                                {loading && <Loader2Icon className='animate-spin' />}
+                                Disconnect</Button>}
                     </div>
                 </div>
-                <ChatBox conversation={conversation}
-                enableFeedbackNotes={enableFeedbackNotes}
-                coachingOption={DiscussionRoomData?.coachingOption}
-                />
-                <h2 className='p-4 border rounded-2xl mt-5'>{transcribe}</h2>
+                <div>
+                    <ChatBox conversation={conversation}
+                        enableFeedbackNotes={enableFeedbackNotes}
+                        coachingOption={DiscussionRoomData?.coachingOption}
+                    />
+                </div>
             </div>
+
+            {transcribe && <div>
+                <h2 className='p-4 border rounded-2xl mt-5'>{transcribe}</h2>
+            </div>}
         </div>
+        // <div className='-mt-12'>
+        //     <h2 className='text-lg font-bold'>{DiscussionRoomData?.coachingOption}</h2>
+        //     <div className='mt-5 grid grid-cols-1 lg:grid-cols-3 gap-10'>
+        //         <div className=' lg:col-span-2'>
+        //             <div className='h-[60vh] bg-secondary border rounded-4xl
+        //             flex flex-col items-center justify-center relative'>
+        //                 <Image src={expert?.avatar} alt='Avatar' width={200} height={200}
+        //                     className='h-[80px] w-[80px] rounded-full object-cover animate-pulse'/>
+        //                 <h2 className='text-gray-500'>{expert?.name}</h2>
+
+        //                 <audio src={audioUrl} type="audio/mp3" autoPlay />
+        //                 <div className='p-5 bg-gray-200 px-10 rounded-lg absolute bottom-10 right-10'>
+        //                     <UserButton />
+        //                 </div>
+        //             </div>
+        //             <div className='mt-5 flex items-center justify-center'>
+        //                 {!enableMic ? <Button onClick={connectToServer} disable ={loading}>
+        //                 {loading && <Loader2Icon className='animate-spin' />}Connect</Button>
+        //                 :
+        //                 <Button variant="destructive" onClick={disconnect} disable ={loading}>
+        //                     {loading && <Loader2Icon className='animate-spin' />}
+        //                     Disconnect</Button>}
+        //             </div>
+        //         </div>
+        //         <div>
+        //             <ChatBox conversation={conversation}
+        //             enableFeedbackNotes={enableFeedbackNotes}
+        //             coachingOption={DiscussionRoomData?.coachingOption}
+        //             />
+        //         </div>
+        //     {transcribe && <div>
+        //         <h2 className='p-4 border rounded-2xl mt-5'>{transcribe}</h2>
+        //     </div>}
+        // </div>
     )
 }
 

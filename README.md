@@ -1,3 +1,5 @@
+ Ace your interviews with AI! Learn to build a Full AI Mock Interview Web App using the latest tech stack. 🚀 This app allows anyone to log in, create their personalized interviews, and practice effectively—all while getting AI-driven feedback! 
+ 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
