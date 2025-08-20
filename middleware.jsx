@@ -7,6 +7,7 @@ export async function middleware(request) {
         return NextResponse.redirect(new URL('/handler/sign-in', request.url));
     }
     return NextResponse.next();
+    // return NextResponse.redirect(new URL('/dashboard/', request.url))
 }
 
 export const config = {

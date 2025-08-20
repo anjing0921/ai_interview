@@ -2,7 +2,7 @@ import React from 'react'
 import AppHeader from './_components/AppHeader'
 
 
-function DashboardLayou({ children }) {
+function DashboardLayout({ children }) {
     return ( 
         <div>
             <AppHeader/>
@@ -15,4 +15,4 @@ function DashboardLayou({ children }) {
     )
 }
 
-export default DashboardLayou
+export default DashboardLayout
